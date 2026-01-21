@@ -201,3 +201,70 @@ interface ChatMessage {
   </div>
 ))}
 ```
+
+---
+
+## 💾 저장 전략 옵션
+
+### `ChatOptions` 타입
+
+```typescript
+interface ChatOptions {
+  saveStrategy?: 'always' | 'onEnd';
+}
+```
+
+### 저장 전략
+
+- **`always`** (기본값): 답변이 제출될 때마다 즉시 저장
+- **`onEnd`**: 챗봇 종료 시(isEnd=true)에만 저장
+
+### `StorageAdapter` 인터페이스
+
+```typescript
+interface StorageAdapter {
+  saveState: (userId: string, state: ChatState) => Promise<void>;
+}
+
+interface ChatState {
+  answers: Record<string, any>;
+  currentStep: string;
+  messages: ChatMessage[];
+}
+```
+
+### 사용 예시
+
+```tsx
+// StorageAdapter 구현
+const myAdapter: StorageAdapter = {
+  saveState: async (userId, state) => {
+    console.log('Saving state:', state);
+    await fetch('/api/save', {
+      method: 'POST',
+      body: JSON.stringify({ userId, ...state })
+    });
+  }
+};
+
+// 저장 전략 옵션 사용
+const chat = useChat(
+  FLOW,
+  "user123",
+  "start",
+  myAdapter,
+  { saveStrategy: 'onEnd' }  // 챗봇 종료 시에만 저장
+);
+
+// 기본 동작 (항상 저장)
+const chat2 = useChat(
+  FLOW,
+  "user456",
+  "start",
+  myAdapter,
+  { saveStrategy: 'always' }  // 매 답변마다 저장
+);
+
+// options를 생략하면 'always'가 기본값
+const chat3 = useChat(FLOW, "user789", "start", myAdapter);
+```
