@@ -69,6 +69,46 @@ export function useChat(
     return guestId;
   }, [userId, isBrowser]);
 
+  // ⭐ 세션 ID 초기화 로직 (Smart Loading)
+  const initializeSessionId = useCallback((): string => {
+    if (!isBrowser) return 'ssr_placeholder';
+
+    const requestedSessionId = options?.sessionId;
+    const lastSessionKey = `_nago_chat_last_session_${scenarioId}_${effectiveUserId}`;
+
+    // 1. 옵션에 'new'가 지정되면 항상 새 세션 생성
+    if (requestedSessionId === 'new') {
+      const newId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem(lastSessionKey, newId);
+      return newId;
+    }
+
+    // 2. 특정 세션 ID가 지정되면 해당 세션 사용
+    if (requestedSessionId && requestedSessionId !== 'auto') {
+      localStorage.setItem(lastSessionKey, requestedSessionId);
+      return requestedSessionId;
+    }
+
+    // 3. 'auto' 또는 미지정: 마지막 세션 복구 또는 새로 생성
+    const lastSessionId = localStorage.getItem(lastSessionKey);
+    if (lastSessionId) {
+      return lastSessionId;
+    }
+
+    // 4. 마지막 세션도 없으면 새로 생성
+    const newId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    localStorage.setItem(lastSessionKey, newId);
+    return newId;
+  }, [isBrowser, options?.sessionId, scenarioId, effectiveUserId]);
+
+  // ⭐ 세션 ID 상태 관리
+  const [currentSessionId, setCurrentSessionId] = useState<string>(() => initializeSessionId());
+
+  // ⭐ 세션 기반 스토리지 키 생성
+  const getStorageKey = useCallback((sessionId: string) => {
+    return `_nago_chat_${scenarioId}_${effectiveUserId}_${sessionId}`;
+  }, [scenarioId, effectiveUserId]);
+
   const engine = useMemo(() => new ChatEngine(flow), [flow]);
 
   // 🔴 CRITICAL: Hydration 안전 - 초기 상태는 항상 동일
@@ -90,17 +130,18 @@ export function useChat(
     if (!isBrowser || isLoaded) return;
 
     const loadSavedState = async () => {
-      const storageKey = `_nago_chat_${scenarioId}_${effectiveUserId}`;
+      const storageKey = getStorageKey(currentSessionId); // ⭐ 세션 기반 키 사용
       const guestMode = isGuest(effectiveUserId);
 
       try {
         // 1. 서버 데이터 로드 (Guest가 아닐 때만)
         let serverState: ChatState | null = null;
         if (!guestMode && adapter?.loadState) {
+          // ⭐ 어댑터에 세션 ID도 전달 (향후 확장 가능)
           serverState = await adapter.loadState(effectiveUserId);
         }
 
-        // 2. 로컬 데이터 로드
+        // 2. 로컬 데이터 로드 (세션별)
         const localData = localStorage.getItem(storageKey);
         const localState: ChatState | null = localData ? JSON.parse(localData) : null;
 
@@ -135,7 +176,7 @@ export function useChat(
     };
 
     loadSavedState();
-  }, [isBrowser, effectiveUserId, flowHash, scenarioId, adapter, isLoaded]);
+  }, [isBrowser, effectiveUserId, flowHash, scenarioId, adapter, isLoaded, currentSessionId, getStorageKey]);
 
   // 저장 로직 헬퍼
   const saveIfNeeded = useCallback(async (
@@ -161,8 +202,8 @@ export function useChat(
       updatedAt: Date.now()
     };
 
-    // 로컬 저장 (항상)
-    const storageKey = `_nago_chat_${scenarioId}_${effectiveUserId}`;
+    // 로컬 저장 (세션별 키 사용)
+    const storageKey = getStorageKey(currentSessionId); // ⭐ 세션 기반 키
     localStorage.setItem(storageKey, JSON.stringify(state));
 
     // 서버 저장 조건: 
@@ -177,7 +218,7 @@ export function useChat(
         console.error('[useChat] Failed to save to server:', error);
       }
     }
-  }, [isBrowser, adapter, options, flow, flowHash, scenarioId, effectiveUserId]);
+  }, [isBrowser, adapter, options, flow, flowHash, effectiveUserId, currentSessionId, getStorageKey]);
 
   const submitAnswer = useCallback(async (value: any) => {
     try {
@@ -239,12 +280,60 @@ export function useChat(
     }
   }, [stepId, engine, answers, messages, saveIfNeeded]);
 
+  // ⭐ 세션 리셋 함수 (새 상담 시작 또는 특정 세션 불러오기)
+  const reset = useCallback((newSessionId?: string) => {
+    if (!isBrowser) return;
+
+    // 1. 새 세션 ID 결정
+    const targetSessionId = newSessionId || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // 2. 마지막 세션 업데이트
+    const lastSessionKey = `_nago_chat_last_session_${scenarioId}_${effectiveUserId}`;
+    localStorage.setItem(lastSessionKey, targetSessionId);
+
+    // 3. 세션 ID 변경
+    setCurrentSessionId(targetSessionId);
+
+    // 4. 특정 세션을 불러오는 경우
+    if (newSessionId) {
+      const storageKey = getStorageKey(targetSessionId);
+      const sessionData = localStorage.getItem(storageKey);
+
+      if (sessionData) {
+        try {
+          const savedState: ChatState = JSON.parse(sessionData);
+
+          // 시나리오 해시 검증
+          if (savedState.flowHash === flowHash) {
+            setStepId(savedState.currentStep);
+            setAnswers(savedState.answers);
+            setMessages(savedState.messages);
+            console.log('[useChat] Session restored:', targetSessionId);
+            return;
+          } else {
+            console.log('[useChat] Session flowHash mismatch. Starting fresh.');
+          }
+        } catch (error) {
+          console.error('[useChat] Failed to restore session:', error);
+        }
+      }
+    }
+
+    // 5. 새 세션 또는 복구 실패 시 초기화
+    setStepId(initialNodeId);
+    setAnswers({});
+    setMessages([]);
+    console.log('[useChat] New session started:', targetSessionId);
+  }, [isBrowser, scenarioId, effectiveUserId, flowHash, initialNodeId, getStorageKey]);
+
   return {
     node: engine.getCurrentNode(stepId),
     submitAnswer,
     submitInput,
     answers,
     messages,
-    isEnd: !!flow[stepId]?.isEnd
+    isEnd: !!flow[stepId]?.isEnd,
+    sessionId: currentSessionId, // ⭐ 현재 세션 ID
+    reset                        // ⭐ 세션 리셋 함수
   };
 }
