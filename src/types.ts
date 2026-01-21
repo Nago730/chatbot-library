@@ -14,11 +14,16 @@ export interface ChatMessage {
   timestamp: number;
 }
 
+export interface ChatOptions {
+  saveStrategy?: 'always' | 'onEnd';
+}
+
 export interface ChatState {
   answers: Record<string, any>;
   currentStep: string;
+  messages: ChatMessage[];
 }
 
 export interface StorageAdapter {
-  save: (userId: string, data: any) => Promise<void>;
+  saveState: (userId: string, state: ChatState) => Promise<void>;
 }
