@@ -379,7 +379,7 @@ AI 기반 개발에 최적화된 문서를 목표로 하고 있습니다.
 
 - ⭐ **Star** 하나가 개발 동기부여가 됩니다!
 - 🐛 버그 제보: [Issues](https://github.com/Nago730/chatbot-library/issues)
-- 💡 기능 제안: [Discussions](https://github.com/Nago730/chatbot-library/discussions)
+- 💡 기능 제안: [Issues](https://github.com/Nago730/chatbot-library/issues) (기능 제안도 환영합니다!)
 
 ---
 
