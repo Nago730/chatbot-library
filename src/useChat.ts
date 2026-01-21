@@ -5,7 +5,7 @@ import { ChatNode, StorageAdapter } from './types';
 export function useChat(flow: Record<string, ChatNode>, userId: string, adapter?: StorageAdapter) {
   // 매번 엔진을 새로 생성하지 않도록 메모이제이션
   const engine = useMemo(() => new ChatEngine(flow), [flow]);
-  
+
   const [stepId, setStepId] = useState('start');
   const [answers, setAnswers] = useState<Record<string, any>>({});
 
@@ -13,7 +13,7 @@ export function useChat(flow: Record<string, ChatNode>, userId: string, adapter?
     try {
       const currentNode = engine.getCurrentNode(stepId);
       const nextStepId = engine.getNextStep(stepId, value);
-      
+
       const newAnswers = { ...answers, [currentNode.id]: value };
       setAnswers(newAnswers);
       setStepId(nextStepId);
@@ -30,9 +30,33 @@ export function useChat(flow: Record<string, ChatNode>, userId: string, adapter?
     }
   }, [stepId, engine, answers, flow, userId, adapter]);
 
+  const submitInput = useCallback(async (inputValue: string) => {
+    if (!inputValue.trim()) {
+      return;
+    }
+
+    try {
+      const currentNode = engine.getCurrentNode(stepId);
+      const nextStepId = engine.getNextStep(stepId, inputValue);
+
+      const newAnswers = { ...answers, [currentNode.id]: inputValue };
+      setAnswers(newAnswers);
+      setStepId(nextStepId);
+
+      // 마지막 노드 도달 시 어댑터 실행
+      const nextNode = flow[nextStepId];
+      if (nextNode?.isEnd && adapter) {
+        await adapter.save(userId, newAnswers);
+      }
+    } catch (error) {
+      throw error;
+    }
+  }, [stepId, engine, answers, flow, userId, adapter]);
+
   return {
     node: engine.getCurrentNode(stepId),
     submitAnswer,
+    submitInput,
     answers,
     isEnd: !!flow[stepId]?.isEnd
   };

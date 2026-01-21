@@ -12,18 +12,21 @@ const CLEANING_FLOW: Record<string, ChatNode> = {
   start: {
     id: "serviceType",
     question: "안녕하세요! 어떤 청소 서비스가 필요하신가요?",
+    type: "button",
     options: ["이사청소", "거주청소", "사무실청소"],
     next: (val) => (val === "거주청소" ? "isVacant" : "spaceSize"),
   },
   isVacant: {
     id: "isVacant",
     question: "현재 짐이 있는 상태인가요?",
+    type: "button",
     options: ["네, 비어있어요", "아니오, 짐이 있어요"],
     next: "spaceSize",
   },
   spaceSize: {
     id: "spaceSize",
     question: "공간의 평수는 어떻게 되나요? (숫자만 입력)",
+    type: "input",
     next: "complete",
   },
   complete: {
@@ -36,8 +39,7 @@ const CLEANING_FLOW: Record<string, ChatNode> = {
 
 export default function App() {
   // 3. 라이브러리의 useChat 훅 사용
-  // userId는 실제 서비스라면 로그인한 사용자의 ID를 넣으면 됩니다.
-  const { node, submitAnswer, answers, isEnd } = useChat(CLEANING_FLOW, "customer_001");
+  const { node, submitAnswer, submitInput, answers, isEnd } = useChat(CLEANING_FLOW, "customer_001");
 
   return (
     <div style={{ maxWidth: '500px', margin: '40px auto', fontFamily: 'sans-serif' }}>
@@ -52,7 +54,7 @@ export default function App() {
           </p>
 
           {/* 선택지 버튼 (이사청소, 거주청소 등) */}
-          {!isEnd && node.options && (
+          {!isEnd && (node.type === 'button' || !node.type) && node.options && (
             <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
               {node.options.map((opt) => (
                 <button
@@ -66,14 +68,14 @@ export default function App() {
             </div>
           )}
 
-          {/* 주관식 입력창 (평수 입력 등) */}
-          {!isEnd && !node.options && (
+          {/* 주관식 입력창 (평수 입력 등) - type: 'input' 대응 */}
+          {!isEnd && node.type === 'input' && (
             <input
               type="text"
               placeholder="답변을 입력하고 Enter를 누르세요"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  submitAnswer((e.target as HTMLInputElement).value);
+                  submitInput((e.target as HTMLInputElement).value);
                   (e.target as HTMLInputElement).value = ""; // 입력창 비우기
                 }
               }}

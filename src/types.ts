@@ -1,6 +1,7 @@
 export interface ChatNode {
   id: string;
   question: string;
+  type?: 'button' | 'input';
   options?: string[];
   next: string | ((answer: any) => string);
   isEnd?: boolean;
