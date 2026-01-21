@@ -1,7 +1,7 @@
 {
   "name": "@nago730/chatbot-library",
-  "version": "1.1.0",
-  "description": "청소업체 등 고객 정보 수집을 위한 실시간 계산 챗봇 엔진",
+  "version": "1.1.1",
+  "description": "React용 Headless 챗봇 엔진: JSON 시나리오, 멀티 세션, Firebase 등 유연한 상태 관리 지원",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
