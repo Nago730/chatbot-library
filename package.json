@@ -1,19 +1,24 @@
 {
   "name": "@nago730/chatbot-library",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "청소업체 등 고객 정보 수집을 위한 실시간 계산 챗봇 엔진",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch --clean",
     "lint": "tsc"
   },
-  "keywords": ["chatbot", "headless", "react"],
+  "keywords": [
+    "chatbot",
+    "headless",
+    "react"
+  ],
   "author": "Your Name",
   "license": "MIT",
   "peerDependencies": {
