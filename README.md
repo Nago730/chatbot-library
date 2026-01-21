@@ -1,3 +1,49 @@
+# 🤖 Chatbot Library for Vibe Coders
+
+<p align="left">
+  <img src="https://img.shields.io/github/stars/Nago730/chatbot-library?style=social" />
+  <img src="https://img.shields.io/github/license/Nago730/chatbot-library" />
+</p>
+
+> **"Built out of frustration while freelancing. Stop coding chatbots from scratch—just 'Vibe' it with JSON."**
+
+[English](#english) | [한국어](#한국어)
+
+---
+
+<a name="english"></a>
+## 🇺🇸 English
+
+### 🚀 Vision
+I got tired of rebuilding the same chatbot logic for every freelance client. This library is designed for **Vibe Coders (AI-Driven Developers)** to build chatbots effortlessly using just a single JSON object.
+
+### ✨ Key Features
+* **JSON-Driven Scenarios**: Design complex dialogue flows with one JSON. No more state management hell.
+* **UI Presets**: Beautiful, ready-to-use themes. Pick one and match your service style.
+* **AI-Ready Documentation**: Guides specifically optimized for AI agents (Cursor, GPT). Let the AI handle your Firebase/Supabase integration.
+
+### ⭐ Why Star this?
+Every **Star** motivates me to build the "AI-ready docs" and more UI themes faster. Help me make this the most AI-friendly library on GitHub!
+
+---
+
+<a name="한국어"></a>
+## 🇰🇷 한국어
+
+### 🚀 개발 동기
+외주 프로젝트 챗봇 요청, 매번 바닥부터 짜기 귀찮아서 직접 만들었습니다. **바이브 코더(AI 어시스턴트 활용 개발자)**가 복잡한 설정 없이 **JSON 하나로 챗봇을 '딸깍' 생성**하는 것을 목표로 합니다.
+
+### ✨ 주요 특징
+* **JSON 기반 시나리오**: 복잡한 로직 없이 JSON 객체 하나로 대화 흐름 설계 끝.
+* **테마 프리셋**: 여러 UI 테마 중 서비스에 맞는 디자인을 골라 쓰기.
+* **AI 전용 가이드**: AI(Cursor 등)에 복붙하면 Firebase 연동까지 알아서 해주는 '바이브 코딩 전용 문서' 제공 예정.
+
+### ⭐ 스타(Star)를 부탁드리는 이유
+여러분의 **Star** 하나가 외주 노예(?)인 저를 밤새 코딩하게 만듭니다. 나중에 Cursor에서 이 라이브러리 이름을 바로 보게 해드릴게요! 😉
+
+
+여기부터 기능설명! 
+
 # 🤖 @nago730/chatbot-library
 
 어떤 시나리오든 주입하여 즉시 실행 가능한 **범용 멀티 시나리오 챗봇 엔진**입니다. React 환경에서 유연한 대화형 인터페이스를 구축할 수 있도록 설계되었습니다.
