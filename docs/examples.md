@@ -38,6 +38,7 @@ const SUPPORT_FLOW = {
   tracking_result: {
     id: 'tracking_result',
     question: (answers) => `운송장번호 ${answers.tracking} 조회 결과: 배송 중입니다.`,
+    next: '',
     isEnd: true
   },
   refund: {
@@ -50,11 +51,13 @@ const SUPPORT_FLOW = {
   refund_confirm: {
     id: 'refund_confirm',
     question: '환불 접수가 완료되었습니다. 3일 이내 처리됩니다.',
+    next: '',
     isEnd: true
   },
   agent_connect: {
     id: 'agent_connect',
     question: '상담원 연결을 대기합니다. 잠시만 기다려주세요...',
+    next: '',
     isEnd: true
   },
   guide_view: { // 공통 안내 노드
@@ -67,6 +70,7 @@ const SUPPORT_FLOW = {
   end_bye: {
     id: 'end_bye',
     question: '이용해주셔서 감사합니다.',
+    next: '',
     isEnd: true
   }
 };
@@ -116,6 +120,7 @@ const SURVEY_FLOW = {
   final: {
     id: 'final',
     question: '소중한 의견 감사합니다.',
+    next: '',
     isEnd: true
   }
 };
@@ -175,9 +180,9 @@ const MBTI_FLOW = {
     }
   },
   // 결과 노드들...
-  result_ENFP: { id: 'result_ENFP', question: '당신은 재기발랄한 활동가 ENFP!', isEnd: true },
-  result_ISTP: { id: 'result_ISTP', question: '당신은 만능 재주꾼 ISTP!', isEnd: true },
+  result_ENFP: { id: 'result_ENFP', question: '당신은 재기발랄한 활동가 ENFP!', next: '', isEnd: true },
+  result_ISTP: { id: 'result_ISTP', question: '당신은 만능 재주꾼 ISTP!', next: '', isEnd: true },
   // ... (기타 유형 생략, fallback)
-  result_default: { id: 'result_default', question: '당신은 알 수 없는 신비로운 유형!', isEnd: true }
+  result_default: { id: 'result_default', question: '당신은 알 수 없는 신비로운 유형!', next: '', isEnd: true }
 };
 ```

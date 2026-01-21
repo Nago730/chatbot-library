@@ -52,6 +52,7 @@ const SUPPORT_FLOW = {
   complete: {
     id: 'complete',
     question: '감사합니다. 곧 연락드리겠습니다.',
+    next: '',
     isEnd: true
   }
 };

@@ -43,6 +43,7 @@ const SIMPLE_FLOW = {
   greeting: {
     id: 'greeting',
     question: '반갑습니다!',
+    next: '',
     isEnd: true
   }
 };
@@ -99,11 +100,13 @@ const FLOW = {
   coffee: {
     id: 'coffee',
     question: '아메리카노 준비 중...',
+    next: '',
     isEnd: true
   },
   tea: {
     id: 'tea',
     question: '녹차 준비 중...',
+    next: '',
     isEnd: true
   }
 };
@@ -130,6 +133,7 @@ const ORDER_FLOW = {
   complete: {
     id: 'complete',
     question: '주문 완료!',
+    next: '',
     isEnd: true
   }
 };
@@ -333,16 +337,19 @@ const SURVEY_FLOW = {
   teen: {
     id: 'teen',
     question: '젊으시네요!',
+    next: '',
     isEnd: true
   },
   adult: {
     id: 'adult',
     question: '한창 때시네요!',
+    next: '',
     isEnd: true
   },
   senior: {
     id: 'senior',
     question: '연륜이 느껴집니다!',
+    next: '',
     isEnd: true
   }
 };
@@ -377,11 +384,13 @@ const BOOKING_FLOW = {
   complete: {
     id: 'complete',
     question: '예약완료!',
+    next: '',
     isEnd: true
   },
   cancel: {
     id: 'cancel',
     question: '취소되었습니다',
+    next: '',
     isEnd: true
   }
 };
@@ -443,6 +452,7 @@ const EMAIL_FLOW = {
   confirm: {
     id: 'confirm',
     question: '확인되었습니다',
+    next: '',
     isEnd: true
   }
 };
@@ -589,7 +599,7 @@ const GOOD_FLOW = {
   email: { /* 이메일 입력만 담당 */ },
   verify: { /* 검증만 담당 */ },
   error: { /* 에러 처리 */ },
-  complete: { isEnd: true }
+  complete: { isEnd: true, next: '' }
 };
 ```
 
@@ -778,6 +788,7 @@ const SUPPORT_FLOW = {
   delivery_status: {
     id: 'delivery_status',
     question: '배송 중입니다.',
+    next: '',
     isEnd: true
   },
   
@@ -791,6 +802,7 @@ const SUPPORT_FLOW = {
   refund_process: {
     id: 'refund_process',
     question: '환불 접수되었습니다. 3-5일 소요됩니다.',
+    next: '',
     isEnd: true
   },
   
@@ -804,12 +816,14 @@ const SUPPORT_FLOW = {
   agent: {
     id: 'agent',
     question: '상담원 연결 중입니다...',
+    next: '',
     isEnd: true
   },
   
   complete: {
     id: 'complete',
     question: '감사합니다!',
+    next: '',
     isEnd: true
   }
 };
@@ -865,6 +879,7 @@ const SURVEY_FLOW = {
   complete: {
     id: 'complete',
     question: '감사합니다!',
+    next: '',
     isEnd: true
   }
 };
@@ -911,12 +926,14 @@ const MEDICAL_FLOW = {
   recommendation: {
     id: 'recommendation',
     question: '약국 방문을 권장합니다.',
+    next: '',
     isEnd: true
   },
   
   complete: {
     id: 'complete',
     question: '건강하세요!',
+    next: '',
     isEnd: true
   }
 };
