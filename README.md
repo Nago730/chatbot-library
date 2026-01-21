@@ -199,6 +199,40 @@ const chat = useChat(flow, userId, 'start', adapter, {
 
 ---
 
+## 🔄 멀티 세션 지원
+
+**한 사용자가 여러 번 상담을 시작**할 수 있도록 세션 기반 상태 관리를 지원합니다.
+
+### ✨ 주요 기능
+
+- ✅ **세션별 데이터 격리**: 각 상담은 독립적인 세션 ID로 분리 저장
+- ✅ **스마트 로딩**: 마지막 세션 자동 복구 또는 새 세션 생성
+- ✅ **reset() 함수**: UI에서 간단하게 새 상담 시작
+- ✅ **세션 전환**: 이전 상담 내역 불러오기 가능
+
+### 📖 빠른 예제
+
+```typescript
+const { sessionId, reset, isEnd } = useChat(flow, userId, 'start', adapter, {
+  sessionId: 'auto' // 'auto' | 'new' | 'specific_session_id'
+});
+
+// 새 상담 시작
+<button onClick={() => reset()}>새로운 상담 시작</button>
+
+// 특정 상담 불러오기
+<button onClick={() => reset('session_1706000000_abc')}>이전 상담 보기</button>
+
+// 현재 세션 ID 표시
+<p>세션: {sessionId}</p>
+```
+
+### 📚 상세 가이드
+
+- 📖 [멀티 세션 완벽 가이드](./docs/multi-session-guide.md) - 전체 API 레퍼런스 및 사용 예제
+
+---
+
 ## 📖 API 레퍼런스
 
 ### `useChat` Parameters
