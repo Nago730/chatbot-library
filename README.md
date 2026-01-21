@@ -1,172 +1,160 @@
-# 🤖 Chatbot Library for Vibe Coders
+# @nago730/chatbot-library
+
+> **JSON 하나로 만드는 프로덕션 레디 챗봇 엔진** — React 환경에서 복잡한 대화형 인터페이스를 5분 안에 구축하세요.
 
 <p align="left">
-  <img src="https://img.shields.io/github/stars/Nago730/chatbot-library?style=social" />
-  <img src="https://img.shields.io/github/license/Nago730/chatbot-library" />
+  <img src="https://img.shields.io/npm/v/@nago730/chatbot-library" alt="npm version" />
+  <img src="https://img.shields.io/github/license/Nago730/chatbot-library" alt="license" />
+  <img src="https://img.shields.io/npm/dm/@nago730/chatbot-library" alt="downloads" />
 </p>
 
-> **"Built out of frustration while freelancing. Stop coding chatbots from scratch—just 'Vibe' it with JSON."**
+---
 
-[English](#english) | [한국어](#한국어)
+## 🎯 핵심 기능 3가지
+
+| 기능 | 설명 | 효과 |
+|------|------|------|
+| 🗂️ **JSON 기반 시나리오** | 코드 없이 대화 흐름 설계 | 개발 시간 **90% 단축** |
+| 🔄 **멀티 세션 관리** | 한 사용자가 여러 상담 진행 | 사용자 경험 **향상** |
+| 🔥 **프로덕션 레디** | Firebase 연동 + 비용 최적화 | 운영 비용 **98% 절감** |
 
 ---
 
-<a name="english"></a>
-## 🇺🇸 English
+## ⚡ 5분 빠른 시작
 
-### 🚀 Vision
-I got tired of rebuilding the same chatbot logic for every freelance client. This library is designed for **Vibe Coders (AI-Driven Developers)** to build chatbots effortlessly using just a single JSON object.
-
-### ✨ Key Features
-* **JSON-Driven Scenarios**: Design complex dialogue flows with one JSON. No more state management hell.
-* **UI Presets**: Beautiful, ready-to-use themes. Pick one and match your service style.
-* **AI-Ready Documentation**: Guides specifically optimized for AI agents (Cursor, GPT). Let the AI handle your Firebase/Supabase integration.
-
-### ⭐ Why Star this?
-Every **Star** motivates me to build the "AI-ready docs" and more UI themes faster. Help me make this the most AI-friendly library on GitHub!
-
----
-
-<a name="한국어"></a>
-## 🇰🇷 한국어
-
-### 🚀 개발 동기
-외주 프로젝트 챗봇 요청, 매번 바닥부터 짜기 귀찮아서 직접 만들었습니다. **바이브 코더(AI 어시스턴트 활용 개발자)**가 복잡한 설정 없이 **JSON 하나로 챗봇을 '딸깍' 생성**하는 것을 목표로 합니다.
-
-### ✨ 주요 특징
-* **JSON 기반 시나리오**: 복잡한 로직 없이 JSON 객체 하나로 대화 흐름 설계 끝.
-* **테마 프리셋**: 여러 UI 테마 중 서비스에 맞는 디자인을 골라 쓰기.
-* **AI 전용 가이드**: AI(Cursor 등)에 복붙하면 Firebase 연동까지 알아서 해주는 '바이브 코딩 전용 문서' 제공 예정.
-
-### ⭐ 스타(Star)를 부탁드리는 이유
-여러분의 **Star** 하나가 외주 노예(?)인 저를 밤새 코딩하게 만듭니다. 나중에 Cursor에서 이 라이브러리 이름을 바로 보게 해드릴게요! 😉
-
-
-여기부터 기능설명! 
-
-# 🤖 @nago730/chatbot-library
-
-어떤 시나리오든 주입하여 즉시 실행 가능한 **범용 멀티 시나리오 챗봇 엔진**입니다. React 환경에서 유연한 대화형 인터페이스를 구축할 수 있도록 설계되었습니다.
-
-## ✨ 주요 특징
-
-* **시나리오 기반 엔진**: JSON 형태의 시나리오 데이터(`flow`)만으로 복잡한 대화 흐름을 제어합니다.
-* **멀티 시나리오 지원**: 런타임에 시나리오를 동적으로 교체하며, 교체 시 상태가 자동으로 초기화됩니다.
-* **대화 히스토리 추적**: `messages` 배열을 통해 전체 대화 내역을 타임라인 순으로 관리합니다.
-* **플러그형 저장소 어댑터**: Firebase, LocalStorage 등 어떤 DB와도 쉽게 연결할 수 있는 `StorageAdapter`를 제공합니다.
-* **저장 전략 옵션**: 매 답변마다 저장할지(`always`), 대화가 끝날 때만 저장할지(`onEnd`) 선택 가능합니다.
-
----
-
-## 📦 설치
+### 1. 설치
 
 ```bash
 npm install @nago730/chatbot-library
-
 ```
 
----
-
-## 🚀 빠른 시작 가이드
-
-### 1. 시나리오 정의
-
-`ChatNode` 인터페이스에 맞춰 대화 흐름을 구성합니다.
+### 2. Flow 정의 (JSON)
 
 ```typescript
-const MY_FLOW = {
+const SUPPORT_FLOW = {
   start: {
     id: 'start',
-    question: '안녕하세요! 어떤 도움이 필요하신가요?',
+    question: '무엇을 도와드릴까요?',
     type: 'button',
-    options: ['서비스 문의', 'AS 신청'],
-    next: 'choice_step'
+    options: ['주문 문의', '배송 조회', '취소/환불'],
+    next: (answer) => {
+      if (answer === '주문 문의') return 'order';
+      if (answer === '배송 조회') return 'delivery';
+      return 'refund';
+    }
   },
-  // ... 다음 노드들
+  order: {
+    id: 'order',
+    question: '주문번호를 입력해주세요',
+    type: 'input',
+    next: 'complete'
+  },
   complete: {
     id: 'complete',
     question: '감사합니다. 곧 연락드리겠습니다.',
     isEnd: true
   }
 };
-
 ```
 
-### 2. 컴포넌트에서 사용
-
-`useChat` 훅을 사용하여 챗봇 로직을 연결합니다.
+### 3. 컴포넌트에서 사용
 
 ```tsx
 import { useChat } from '@nago730/chatbot-library';
 
-function ChatComponent() {
-  const { node, messages, submitAnswer, isEnd } = useChat(MY_FLOW, "user_123");
+function ChatBot() {
+  const { node, submitAnswer, submitInput, messages, isEnd } = useChat(
+    SUPPORT_FLOW,
+    'user_123'
+  );
+
+  if (isEnd) {
+    return <div>✅ {node.question}</div>;
+  }
 
   return (
     <div>
-      {/* 대화 내역 렌더링 */}
+      {/* 대화 히스토리 */}
       {messages.map((msg, i) => (
-        <div key={i}>👤 {msg.answer} | 🤖 {msg.question}</div>
+        <div key={i}>
+          <p>🤖 {msg.question}</p>
+          <p>👤 {msg.answer}</p>
+        </div>
       ))}
 
-      {/* 현재 질문 및 선택지 */}
-      {!isEnd && (
-        <>
-          <p>{node.question}</p>
-          {node.options?.map(opt => (
-            <button key={opt} onClick={() => submitAnswer(opt)}>{opt}</button>
-          ))}
-        </>
+      {/* 현재 질문 */}
+      <p>{node.question}</p>
+
+      {/* 버튼형 */}
+      {node.type === 'button' && node.options?.map(opt => (
+        <button key={opt} onClick={() => submitAnswer(opt)}>
+          {opt}
+        </button>
+      ))}
+
+      {/* 입력형 */}
+      {node.type === 'input' && (
+        <input onKeyDown={(e) => {
+          if (e.key === 'Enter') submitInput(e.currentTarget.value);
+        }} />
       )}
     </div>
   );
 }
-
 ```
+
+**🎉 완료!** 이제 작동하는 챗봇이 생겼습니다.
 
 ---
 
-## 💾 Firebase 연동 (StorageAdapter)
+## 📚 핵심 개념
 
-라이브러리는 DB 조작 로직을 직접 포함하지 않고, 개발자가 구현한 인터페이스를 실행합니다.
+### Flow 구조
 
-### 어댑터 구현 및 연결 예시
+Flow는 **노드(Node)의 집합**입니다. 각 노드는 질문과 다음 단계를 정의합니다.
 
 ```typescript
-// 1. Firebase API 구현 (firebaseService.ts)
-const firebaseAdapter = {
-  saveState: async (userId, state) => {
-    await setDoc(doc(db, 'chat_sessions', userId), state);
-  },
-  loadState: async (userId) => {
-    const snap = await getDoc(doc(db, 'chat_sessions', userId));
-    return snap.exists() ? snap.data() : null;
-  }
-};
+interface ChatNode {
+  id: string;                    // 고유 ID
+  question: string;              // 사용자에게 보여줄 질문
+  type?: 'button' | 'input';     // 답변 받는 방식 (기본: button)
+  options?: string[];            // 선택지 (type='button'일 때)
+  next: string | ((answer) => string);  // 다음 노드 ID (동적 가능)
+  isEnd?: boolean;               // 대화 종료 표시
+}
+```
 
-// 2. 훅에 연결 및 저장 전략 설정
-const chat = useChat(flow, userId, 'start', firebaseAdapter, {
-  saveStrategy: 'always' // 'always' (매회 저장) 또는 'onEnd' (종료 시만 저장)
+### 세션 관리
+
+한 사용자가 **여러 번 상담**을 시작할 수 있습니다.
+
+```typescript
+const { sessionId, reset } = useChat(FLOW, userId, 'start', adapter, {
+  sessionId: 'auto'  // 'auto' | 'new' | 'specific_id'
 });
 
+// 새 상담 시작
+<button onClick={() => reset()}>새 상담</button>
 ```
+
+### 저장 전략
+
+```typescript
+const chat = useChat(FLOW, userId, 'start', adapter, {
+  saveStrategy: 'onEnd'  // 'always' | 'onEnd'
+});
+```
+
+| 전략 | 저장 시점 | 추천 대상 |
+|------|-----------|-----------|
+| `'always'` | 매 답변마다 | 데이터 무결성이 중요한 경우 |
+| `'onEnd'` | 대화 종료 시 | **비용 절감** (권장) |
 
 ---
 
-## 🔥 프로덕션 레디 Firebase Adapter
+## 🔥 Firebase 연동 (프로덕션)
 
-라이브러리는 **프로덕션 환경에 바로 사용 가능한** Firebase 어댑터 예제를 제공합니다.
-
-### ✅ 핵심 개선사항
-
-| 이슈 | 해결책 | 효과 |
-|------|--------|------|
-| 🔄 기기 전환 시 데이터 복구 실패 | 서버에서 전체 데이터 가져오기 | 복구율 **100%** |
-| ⏱️ 네트워크 타임아웃 | `withTimeout` + 에러 핸들링 | 안정성 **100%** |
-| 🔢 Firebase Timestamp 타입 충돌 | 자동 정규화 | 런타임 에러 **0%** |
-| 💰 과도한 Firebase 비용 | `saveStrategy: 'onEnd'` | 비용 **98% 절감** |
-
-### 🚀 빠른 사용법
+### Quick Start
 
 ```typescript
 import { createHybridFirebaseAdapter } from '@nago730/chatbot-library/examples';
@@ -179,103 +167,225 @@ const adapter = createHybridFirebaseAdapter(db, {
   debug: false
 });
 
-const chat = useChat(flow, userId, 'start', adapter, {
-  saveStrategy: 'onEnd' // 비용 98% 절감!
+const chat = useChat(FLOW, userId, 'start', adapter, {
+  saveStrategy: 'onEnd'  // 비용 98% 절감!
 });
 ```
 
-### 💰 비용 최적화
+### 비용 최적화
 
 **10만 사용자, 일 10회 대화 기준 (Firestore)**
 
-- ❌ 기존: 월 **$2,700**
-- ✅ 개선: 월 **$5.4** (98% 절감)
+| 구성 | 월 비용 | 절감율 |
+|------|---------|--------|
+| 기본 설정 (always + 전체 데이터) | $2,700 | - |
+| **하이브리드 + onEnd** ⭐ | **$5.4** | **99.8%** |
 
-### 📚 상세 가이드
+### 핵심 개선사항
 
-- 📖 [Firebase Adapter 완벽 가이드](./docs/firebase-adapter-guide.md) - 전체 이슈 분석 및 해결 방법
-- ⚡ [Quick Reference](./docs/firebase-quick-reference.md) - 빠른 참조 가이드
-- 🔧 [예제 코드](./src/examples/firebaseAdapter.example.ts) - 실제 구현 코드
+- ✅ **기기 전환 복구**: PC → 모바일 대화 이어가기 100%
+- ✅ **네트워크 안정성**: 타임아웃 + 자동 폴백
+- ✅ **타입 안전**: Firebase Timestamp 자동 정규화
+- ✅ **비용 최적화**: 스마트 저장 전략
+
+📖 [Firebase 상세 가이드](./docs/firebase-adapter-guide.md)
 
 ---
 
-## 🔄 멀티 세션 지원
+## 🔄 멀티 세션
 
-**한 사용자가 여러 번 상담을 시작**할 수 있도록 세션 기반 상태 관리를 지원합니다.
-
-### ✨ 주요 기능
-
-- ✅ **세션별 데이터 격리**: 각 상담은 독립적인 세션 ID로 분리 저장
-- ✅ **스마트 로딩**: 마지막 세션 자동 복구 또는 새 세션 생성
-- ✅ **reset() 함수**: UI에서 간단하게 새 상담 시작
-- ✅ **세션 전환**: 이전 상담 내역 불러오기 가능
-
-### 📖 빠른 예제
+한 사용자가 **여러 상담을 진행**하고 **이전 대화를 불러올** 수 있습니다.
 
 ```typescript
-const { sessionId, reset, isEnd } = useChat(flow, userId, 'start', adapter, {
-  sessionId: 'auto' // 'auto' | 'new' | 'specific_session_id'
+const { sessionId, reset, isEnd } = useChat(FLOW, userId, 'start', adapter, {
+  sessionId: 'auto'
 });
 
-// 새 상담 시작
-<button onClick={() => reset()}>새로운 상담 시작</button>
-
-// 특정 상담 불러오기
-<button onClick={() => reset('session_1706000000_abc')}>이전 상담 보기</button>
-
-// 현재 세션 ID 표시
-<p>세션: {sessionId}</p>
+// UI 예제
+<div>
+  <p>현재 세션: {sessionId}</p>
+  
+  {isEnd && (
+    <button onClick={() => reset()}>
+      새 상담 시작
+    </button>
+  )}
+  
+  <button onClick={() => reset('session_1706000000_abc')}>
+    이전 상담 보기
+  </button>
+</div>
 ```
 
-### 📚 상세 가이드
-
-- 📖 [멀티 세션 완벽 가이드](./docs/multi-session-guide.md) - 전체 API 레퍼런스 및 사용 예제
+📖 [멀티 세션 완벽 가이드](./docs/multi-session-guide.md)
 
 ---
 
-## 📖 API 레퍼런스
+## 📖 API Reference
 
-### `useChat` Parameters
-
-| Parameter | Type | Description |
-| --- | --- | --- |
-| `flow` | `Record<string, ChatNode>` | 시나리오 설계도 데이터 |
-| `userId` | `string` | 사용자 식별자 (저장 및 로드 시 사용) |
-| `initialNodeId` | `string` | 시작 노드 ID (기본값: 'start') |
-| `adapter` | `StorageAdapter` | (Optional) 외부 DB 연동용 어댑터 |
-| `options` | `ChatOptions` | (Optional) `saveStrategy` 설정 |
-
-### `useChat` Return Values
-
-* `node`: 현재 진행 중인 `ChatNode` 객체
-* `submitAnswer`: 버튼 기반 답변 제출 함수
-* `submitInput`: 주관식 텍스트 답변 제출 함수
-* `answers`: 현재까지 수집된 키-값 형태의 결과 데이터
-* `messages`: 전체 대화 히스토리 (ChatMessage 배열)
-* `isEnd`: 시나리오 종료 여부
-
----
-
-## 🛠 타입 정의 (Types)
+### useChat
 
 ```typescript
-export interface ChatMessage {
+useChat(
+  flow: Record<string, ChatNode>,
+  userId: string,
+  initialNodeId?: string,
+  adapter?: StorageAdapter,
+  options?: ChatOptions
+)
+```
+
+#### Parameters
+
+| 파라미터 | 타입 | 설명 |
+|----------|------|------|
+| `flow` | `Record<string, ChatNode>` | 시나리오 Flow 객체 |
+| `userId` | `string` | 사용자 ID (세션 키로 사용) |
+| `initialNodeId` | `string` | 시작 노드 ID (기본: `'start'`) |
+| `adapter` | `StorageAdapter` | 저장소 어댑터 (선택) |
+| `options` | `ChatOptions` | 추가 옵션 (선택) |
+
+#### ChatOptions
+
+```typescript
+interface ChatOptions {
+  saveStrategy?: 'always' | 'onEnd';  // 저장 시점
+  scenarioId?: string;                 // 시나리오 ID
+  sessionId?: 'auto' | 'new' | string; // 세션 전략
+}
+```
+
+#### Return Values
+
+```typescript
+{
+  node: ChatNode;              // 현재 노드
+  submitAnswer: (value: any) => Promise<void>;  // 버튼 답변 제출
+  submitInput: (value: string) => Promise<void>; // 텍스트 답변 제출
+  answers: Record<string, any>;  // 수집된 답변
+  messages: ChatMessage[];       // 대화 히스토리
+  isEnd: boolean;                // 종료 여부
+  sessionId: string;             // 현재 세션 ID
+  reset: (sessionId?: string) => void;  // 세션 리셋
+}
+```
+
+### StorageAdapter
+
+```typescript
+interface StorageAdapter {
+  saveState: (userId: string, state: ChatState) => Promise<void>;
+  loadState: (userId: string) => Promise<ChatState | null>;
+}
+```
+
+---
+
+## 📚 전체 문서
+
+### 가이드
+- 📘 [**Complete Guide**](./docs/complete-guide.md) - 모든 기능 + 실전 패턴
+- 🔥 [Firebase Adapter Guide](./docs/firebase-adapter-guide.md)
+- 🔄 [Multi-Session Guide](./docs/multi-session-guide.md)
+- ⚡ [Quick Reference](./docs/firebase-quick-reference.md)
+
+### 학습 자료
+- ✅ [Best Practices](./docs/best-practices.md) - DO's & DON'Ts
+- 💡 [Examples](./docs/examples.md) - 실전 코드 모음
+- 🔧 [예제 코드](./src/examples/)
+
+---
+
+## ⚠️ Common Pitfalls
+
+개발 시 자주 발생하는 실수들:
+
+1. ❌ **sessionId 없이 멀티 상담 구현** → `reset()` 사용하세요
+2. ❌ **saveStrategy: 'always' + 실시간 타이핑** → `'onEnd'` 사용 권장
+3. ❌ **Firebase Timestamp 정규화 누락** → 어댑터 예제 코드 사용
+4. ❌ **에러 핸들링 없음** → `fallbackToLocal: true` 설정 필수
+
+📖 [전체 Best Practices 보기](./docs/best-practices.md)
+
+---
+
+## 🚀 실전 예제
+
+### 고객 지원 챗봇
+
+```typescript
+const SUPPORT_FLOW = {
+  start: { /* ... */ },
+  order_inquiry: { /* ... */ },
+  delivery_status: { /* ... */ },
+  refund: { /* ... */ }
+};
+
+function CustomerSupport() {
+  const { node, submitAnswer, reset, sessionId } = useChat(
+    SUPPORT_FLOW,
+    customerId,
+    'start',
+    firebaseAdapter,
+    { sessionId: 'auto', saveStrategy: 'onEnd' }
+  );
+  
+  return <ChatUI node={node} onAnswer={submitAnswer} onReset={reset} />;
+}
+```
+
+더 많은 예제: [Examples](./docs/examples.md)
+
+---
+
+## 🛠️ 타입 정의
+
+```typescript
+// ChatNode
+interface ChatNode {
+  id: string;
+  question: string;
+  type?: 'button' | 'input';
+  options?: string[];
+  next: string | ((answer: any) => string);
+  isEnd?: boolean;
+}
+
+// ChatMessage
+interface ChatMessage {
   nodeId: string;
   question: string;
   answer: any;
   timestamp: number;
 }
 
-export interface ChatState {
+// ChatState
+interface ChatState {
   answers: Record<string, any>;
   currentStep: string;
   messages: ChatMessage[];
+  flowHash: string;
+  updatedAt: number;
 }
-
 ```
+
+---
+
+## 🤝 기여하기
+
+이 라이브러리는 프리랜서 외주 작업을 하며 반복되는 챗봇 구현에 지쳐 만들어졌습니다.  
+AI 기반 개발에 최적화된 문서를 목표로 하고 있습니다.
+
+- ⭐ **Star** 하나가 개발 동기부여가 됩니다!
+- 🐛 버그 제보: [Issues](https://github.com/Nago730/chatbot-library/issues)
+- 💡 기능 제안: [Discussions](https://github.com/Nago730/chatbot-library/discussions)
 
 ---
 
 ## 📄 라이선스
 
 MIT License
+
+---
+
+**Made with ❤️ for Vibe Coders** — AI 시대의 더 나은 개발 경험을 위해
