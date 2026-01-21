@@ -7,6 +7,13 @@ export interface ChatNode {
   isEnd?: boolean;
 }
 
+export interface ChatMessage {
+  nodeId: string;
+  question: string;
+  answer: any;
+  timestamp: number;
+}
+
 export interface ChatState {
   answers: Record<string, any>;
   currentStep: string;

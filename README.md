@@ -3,7 +3,7 @@
 이 코드는 당신이 만든 라이브러리를 `npm install` 했다고 가정하고 작성되었습니다.
 
 ```tsx
-import React from 'react';
+import React, { useState } from 'react';
 // 1. 당신이 만든 라이브러리에서 필요한 부품들을 가져옵니다.
 import { useChat, ChatNode } from '@your-id/chatbot-library'; 
 
@@ -37,14 +37,54 @@ const CLEANING_FLOW: Record<string, ChatNode> = {
   },
 };
 
+// 수리 서비스 시나리오 (멀티 시나리오 예시)
+const REPAIR_FLOW: Record<string, ChatNode> = {
+  start: {
+    id: "repairType",
+    question: "어떤 수리가 필요하신가요?",
+    type: "button",
+    options: ["가전제품", "가구", "기타"],
+    next: "complete",
+  },
+  complete: {
+    id: "complete",
+    question: "수리 신청이 완료되었습니다!",
+    isEnd: true,
+    next: ""
+  },
+};
+
 export default function App() {
-  // 3. 라이브러리의 useChat 훅 사용
-  const { node, submitAnswer, submitInput, answers, isEnd } = useChat(CLEANING_FLOW, "customer_001");
+  const [currentFlow, setCurrentFlow] = useState(CLEANING_FLOW);
+  
+  // 3. 라이브러리의 useChat 훅 사용 (새로운 API)
+  const { node, submitAnswer, submitInput, answers, messages, isEnd } = useChat(
+    currentFlow, 
+    "customer_001",
+    "start"  // initialNodeId (선택적, 기본값: 'start')
+  );
 
   return (
     <div style={{ maxWidth: '500px', margin: '40px auto', fontFamily: 'sans-serif' }}>
       <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '15px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
         <h2>🧹 청소 견적 도우미</h2>
+        
+        {/* 시나리오 전환 버튼 (멀티 시나리오 데모) */}
+        <div style={{ marginBottom: '10px', display: 'flex', gap: '10px' }}>
+          <button 
+            onClick={() => setCurrentFlow(CLEANING_FLOW)}
+            style={{ padding: '5px 10px', background: currentFlow === CLEANING_FLOW ? '#007bff' : '#ccc', color: 'white', border: 'none', borderRadius: '5px' }}
+          >
+            청소 상담
+          </button>
+          <button 
+            onClick={() => setCurrentFlow(REPAIR_FLOW)}
+            style={{ padding: '5px 10px', background: currentFlow === REPAIR_FLOW ? '#007bff' : '#ccc', color: 'white', border: 'none', borderRadius: '5px' }}
+          >
+            수리 상담
+          </button>
+        </div>
+        
         <hr />
 
         {/* 질문 영역 */}
@@ -113,3 +153,51 @@ export default function App() {
 1. **실시간 요약:** 하단에 `answers` 객체를 이용해 사용자가 입력한 내용을 바로 보여줍니다. 이는 고객에게 신뢰감을 줍니다.
 2. **동적 질문 처리:** `CLEANING_FLOW`를 보시면 `serviceType`이 무엇이냐에 따라 `isVacant` 질문을 건너뛰거나 포함하는 로직이 적용되어 있습니다.
 3. **UI와 로직의 분리:** 질문 내용이나 순서를 바꾸고 싶을 때, UI 코드를 건드릴 필요 없이 `CLEANING_FLOW` 객체의 내용만 수정하면 됩니다.
+4. **멀티 시나리오 지원:** flow를 동적으로 변경하면 상태가 자동으로 초기화되어 여러 시나리오를 유연하게 전환할 수 있습니다.
+
+---
+
+## 🚀 새로운 API 기능
+
+### `useChat` 훅 시그니처
+
+```typescript
+const { node, submitAnswer, submitInput, answers, messages, isEnd } = useChat(
+  flow: Record<string, ChatNode>,
+  userId: string,
+  initialNodeId?: string,  // 기본값: 'start'
+  adapter?: StorageAdapter
+);
+```
+
+### 반환값
+
+- **`node`**: 현재 질문 노드
+- **`submitAnswer`**: 버튼 클릭 시 답변 제출
+- **`submitInput`**: 텍스트 입력 시 답변 제출
+- **`answers`**: 모든 답변 데이터 (`{ [nodeId]: value }`)
+- **`messages`**: 대화 히스토리 배열 (`ChatMessage[]`)
+- **`isEnd`**: 챗봇 종료 여부
+
+### `ChatMessage` 타입
+
+```typescript
+interface ChatMessage {
+  nodeId: string;      // 노드 ID
+  question: string;    // 질문 내용
+  answer: any;         // 사용자 답변
+  timestamp: number;   // 응답 시간
+}
+```
+
+### 사용 예시: 대화 히스토리 표시
+
+```tsx
+// 대화 내역 출력
+{messages.map((msg, idx) => (
+  <div key={idx}>
+    <strong>Q:</strong> {msg.question}<br />
+    <strong>A:</strong> {msg.answer}
+  </div>
+))}
+```
