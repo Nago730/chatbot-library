@@ -1,0 +1,10 @@
+# 배포용 결과물은 제외 (npm에만 올리고 깃허브에는 소스코드만!)
+dist/
+
+# 도구 관련
+node_modules/
+.DS_Store (Mac용)
+
+# 로그 및 환경변수
+npm-debug.log*
+.env

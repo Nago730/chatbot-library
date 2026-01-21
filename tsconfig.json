@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    /* 기본 설정 */
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler", // tsup 같은 번들러를 쓸 때 가장 적합한 설정입니다.
+    "jsx": "react-jsx",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    
+    /* 결과물 경로 (tsup이 관리하지만 명시해두면 좋습니다) */
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+
+    /* 엄격한 타입 체크 */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true, // 라이브러리 간의 타입 충돌을 방지합니다.
+
+    /* 문제의 원인이었던 설정 수정 */
+    "verbatimModuleSyntax": false, // 빌드 시 모듈 형식 변환을 유연하게 허용합니다.
+    "isolatedModules": true, // esbuild(tsup의 내부 엔진)와 호환성을 높입니다.
+    "esModuleInterop": true, // CommonJS와 ESM 사이의 호환성을 높입니다.
+    "moduleDetection": "force",
+    
+    /* 기타 최적화 */
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": false
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}
