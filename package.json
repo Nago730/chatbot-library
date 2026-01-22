@@ -5,6 +5,17 @@
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nago730/chatbot-library.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Nago730/chatbot-library/issues"
+  },
+  "homepage": "https://github.com/Nago730/chatbot-library#readme",
   "files": [
     "dist",
     "src"
@@ -12,14 +23,17 @@
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts --clean --minify",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch --clean",
-    "lint": "tsc"
+    "lint": "tsc",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "chatbot",
     "headless",
-    "react"
+    "react",
+    "react-chatbot",
+    "engine"
   ],
-  "author": "Your Name",
+  "author": "Nago730",
   "license": "MIT",
   "peerDependencies": {
     "react": ">=16.8.0",
